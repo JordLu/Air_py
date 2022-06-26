@@ -152,6 +152,7 @@ class lcd_handler(Process):
 
             while(1):
                 sleep(LCD_REFRESH)
+		today = datetime.datetime.now()
                 if not self.q.empty():
                     value = self.q.get()
 
