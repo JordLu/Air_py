@@ -156,7 +156,7 @@ class BMP085 :
     X1 = ((UT - self._cal_AC6) * self._cal_AC5) >> 15
     X2 = (self._cal_MC << 11) / (X1 + self._cal_MD)
     B5 = X1 + X2
-    temp = ((B5 + 8) // 16) / 10.0 # temp = ((B5 + 8) >> 4) / 10.0
+    temp = ((B5 + 8) >> 4) / 10.0 # temp = ((B5 + 8) >> 4) / 10.0
     if (self.debug):
       print("DBG: Calibrated temperature = %f C" % temp)
     return temp
@@ -212,8 +212,8 @@ class BMP085 :
 
     # Pressure Calculations
     B6 = B5 - 4000
-    X1 = (self._cal_B2 * (B6 * B6) // 4096) // 2048 # X1 = (self._cal_B2 * (B6 * B6) >> 12) >> 11
-    X2 = (self._cal_AC2 * B6) // 2048 # X2 = (self._cal_AC2 * B6) >> 11
+    X1 = (self._cal_B2 * (B6 * B6) >> 12) >> 11 # X1 = (self._cal_B2 * (B6 * B6) >> 12) >> 11
+    X2 = (self._cal_AC2 * B6) >> 11 # X2 = (self._cal_AC2 * B6) >> 11
     X3 = X1 + X2
     B3 = (((self._cal_AC1 * 4 + X3) << self.mode) + 2) / 4
     if (self.debug):
