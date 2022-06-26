@@ -8,6 +8,9 @@
 # !!!!!!!!!!!!!!I2C must be activated in the Interface Options (third Point) in raspi-config !!!!!!!!!!!      
 #========================================================================
 # Imports
+import sys
+sys.path.insert(0, './Driver')
+
 from Adafruit_BMP085 import BMP085
 import Adafruit_DHT
 import lcddriver
@@ -39,16 +42,16 @@ class BMP_handler(Process):
         
         self.q = queue
 
-
     def run(self):
         print("BMP Reading started...")
         start_time = time()
         while(1):
             sleep(self.interval_low)
+
             temperature = self.bmp.readTemperature()
             pressure = self.bmp.readPressure()
 
-            print('{0:0.1f},{1:0.1f}'.format(temperature, pressure)) # Testzeile
+            print(temperature, pressure) # Testzeile
 
             if pressure is not None and temperature is not None:
                 self.q.put(["Temperature",temperature])
@@ -125,7 +128,12 @@ class lcd_handler(Process):
         
 
     def run(self):
-        lcd = lcddriver.lcd()
+        try:
+            lcd = lcddriver.lcd()
+        except OSError:
+            print("Error connecting to LCD: Check I2C Connection")
+            return -1
+            
         try:
             lcd.lcd_clear()
             lcd.lcd_display_string(" Air Pi", 1)
