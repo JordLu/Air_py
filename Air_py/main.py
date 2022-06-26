@@ -23,7 +23,7 @@ BMP_LOG_NAME = "BMP_log.csv"
 LOG_DIR = 'logs'
 
 # interval for loging and refreshing the values on LCD in seconds
-INTERVAL_LOG = 60
+INTERVAL_LOG = 1
 INTERVAL_LCD = 1
 
 #=======================================================================
