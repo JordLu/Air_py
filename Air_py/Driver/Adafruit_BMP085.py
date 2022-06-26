@@ -128,7 +128,7 @@ class BMP085 :
 
   def readRawPressure(self):
     "Reads the raw (uncompensated) pressure level from the sensor"
-    if self.i2c.write8(self.__BMP085_CONTROL, self.__BMP085_READPRESSURECMD + (self.mode << 6)) is None:
+    if self.i2c.write8(self.__BMP085_CONTROL, self.__BMP085_READPRESSURECMD + (self.mode << 6)) == -1:
       return None
     if (self.mode == self.__BMP085_ULTRALOWPOWER):
       time.sleep(0.005)
