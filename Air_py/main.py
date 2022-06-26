@@ -19,12 +19,13 @@ from multiprocessing import Queue
 # Names of sensor loggings
 DHT_LOG_NAME = "DHT_log.csv"
 BMP_LOG_NAME = "BMP_log.csv"
+
 # Name of Directory for logs
 LOG_DIR = 'logs'
 
 # interval for loging and refreshing the values on LCD in seconds
-INTERVAL_LOG = 1
-INTERVAL_LCD = 1
+INTERVAL_LOG = 10
+INTERVAL_LCD = 4
 
 #=======================================================================
 def INIT_dir(dir):
@@ -48,8 +49,8 @@ if __name__ == "__main__":
     BMP_hnd.start()
     LCD_hnd.start()
 
-    # Terminted Handlers after 60 Seconds 
-    sleep(2)
+    # Terminted Handlers after 60 Seconds (Testing)
+    sleep(100)
     print("Now Exiting!!")
 
     DHT_hnd.terminate()

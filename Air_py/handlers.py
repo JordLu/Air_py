@@ -21,9 +21,14 @@ from multiprocessing import Process, Queue
 
 #=======================================================================
 # Sensor Settings
+# DHT
 DHT_SENSOR = Adafruit_DHT.AM2302
 DHT_PIN = 21
 
+# BMP
+
+# Display Settings
+LCD_REFRESH = 5 # Time in seconds before LCD Display refreshes
 #======================================================================
 
 class BMP_handler(Process):
@@ -126,28 +131,27 @@ class lcd_handler(Process):
         super(lcd_handler,self).__init__()
         self.q = queue
         
-
     def run(self):
         try:
             lcd = lcddriver.lcd()
         except OSError:
             print("Error connecting to LCD: Check I2C Connection")
             return -1
-            
+
         try:
             lcd.lcd_clear()
             lcd.lcd_display_string(" Air Pi", 1)
             lcd.lcd_display_string("", 2)
             lcd.lcd_display_string(" Starting ...", 3)
             lcd.lcd_display_string(" ", 4)
-
-            sleep(20)
+            sleep(5)
 
             temperature = 0
             humidity = 0 
             pressure = 0
 
             while(1):
+                sleep(LCD_REFRESH)
                 if not self.q.empty():
                     value = self.q.get()
 
@@ -157,12 +161,12 @@ class lcd_handler(Process):
                         humidity = value[1]
                     elif value[0] == "Pressure":
                         pressure = value[1]
-
+                
                 lcd.lcd_clear()
                 lcd.lcd_display_string(str(today.strftime("%d.%m.%Y")) + " " + str(today.strftime("%H:%M")), 1)
                 lcd.lcd_display_string("Temperature: " + '{0:0.1f}'.format(temperature), 2)
                 lcd.lcd_display_string("Humidity: " + '{0:0.1f}'.format(humidity), 3)
                 lcd.lcd_display_string("Pressure: " + '{0:0.1f}'.format(pressure), 4)
-            
+
         except KeyboardInterrupt:
 	        lcd.lcd_clear()
