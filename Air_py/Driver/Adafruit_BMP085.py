@@ -3,10 +3,13 @@
 # Adafruit_BMP085.py
 # Autor: Adafruit
 # 
+# Changes made by Lukas Jordan
+# Date: 27 Juni 2022
 # Modified to work with Python 3 
-# futurize --stage1 -w Adafruit_BMP085.py
-#
-# Description: Driver to use BMP180 sensor
+# used futurize --stage1 -w Adafruit_BMP085.py to change syntax and make it python 3 ready
+# Also casting of some values to integer to fix issue with occuring typeError
+# 
+# The calls to read temperature or pressure return None if no Value cant be read
 #========================================================================
 # Imports
 from __future__ import print_function
@@ -74,19 +77,19 @@ class BMP085 :
     self.readCalibrationData()
 
   def readS16(self, register):
-    "Reads a signed 16-bit value"
+    #Reads a signed 16-bit value
     hi = self.i2c.readS8(register)
     lo = self.i2c.readU8(register+1)
     return (hi << 8) + lo
 
   def readU16(self, register):
-    "Reads an unsigned 16-bit value"
+    #Reads an unsigned 16-bit value
     hi = self.i2c.readU8(register)
     lo = self.i2c.readU8(register+1)
     return (hi << 8) + lo
 
   def readCalibrationData(self):
-    "Reads the calibration data from the IC"
+    #Reads the calibration data from the IC
     self._cal_AC1 = self.readS16(self.__BMP085_CAL_AC1)   # INT16
     self._cal_AC2 = self.readS16(self.__BMP085_CAL_AC2)   # INT16
     self._cal_AC3 = self.readS16(self.__BMP085_CAL_AC3)   # INT16
@@ -102,7 +105,7 @@ class BMP085 :
       self.showCalibrationData()
 
   def showCalibrationData(self):
-      "Displays the calibration values for debugging purposes"
+      #Displays the calibration values for debugging purposes
       print("DBG: AC1 = %6d" % (self._cal_AC1))
       print("DBG: AC2 = %6d" % (self._cal_AC2))
       print("DBG: AC3 = %6d" % (self._cal_AC3))
@@ -116,7 +119,7 @@ class BMP085 :
       print("DBG: MD  = %6d" % (self._cal_MD))
 
   def readRawTemp(self):
-    "Reads the raw (uncompensated) temperature from the sensor"
+    #Reads the raw (uncompensated) temperature from the sensor
     if self.i2c.write8(self.__BMP085_CONTROL, self.__BMP085_READTEMPCMD) == -1:
       return None
       
@@ -127,7 +130,7 @@ class BMP085 :
     return raw
 
   def readRawPressure(self):
-    "Reads the raw (uncompensated) pressure level from the sensor"
+    #Reads the raw (uncompensated) pressure level from the sensor
     if self.i2c.write8(self.__BMP085_CONTROL, self.__BMP085_READPRESSURECMD + (self.mode << 6)) == -1:
       return None
     if (self.mode == self.__BMP085_ULTRALOWPOWER):
@@ -147,7 +150,7 @@ class BMP085 :
     return raw
 
   def readTemperature(self):
-    "Gets the compensated temperature in degrees celcius"
+    #Gets the compensated temperature in degrees celcius
     UT = 0
     X1 = 0
     X2 = 0
@@ -156,6 +159,7 @@ class BMP085 :
 
     # Read raw temp before aligning it with the calibration values
     UT = self.readRawTemp()
+    # If Error return none
     if UT is None:
       return None
 
@@ -169,7 +173,7 @@ class BMP085 :
     return temp
 
   def readPressure(self):
-    "Gets the compensated pressure in pascal"
+    #Gets the compensated pressure in pascal
     UT = 0
     UP = 0
     B3 = 0
@@ -184,6 +188,8 @@ class BMP085 :
 
     UT = self.readRawTemp()
     UP = self.readRawPressure()
+
+    # checking for error while reading Raw Values, return none if problem occured 
     if UT is None or UP is None:
       return None
 
@@ -267,7 +273,7 @@ class BMP085 :
     return p
 
   def readAltitude(self, seaLevelPressure=101325):
-    "Calculates the altitude in meters"
+    #Calculates the altitude in meters
     altitude = 0.0
     pressure = float(self.readPressure())
     altitude = 44330.0 * (1.0 - pow(pressure / seaLevelPressure, 0.1903))
