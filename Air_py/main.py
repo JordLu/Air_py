@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 #========================================================================
 # main.py
+# Version: 0.7
 # Autor: Lukas Jordan
 # Datum: 17.06.2022
 # Description: 
 #
 #========================================================================
 # Imports
-import Adafruit_DHT
 import handlers
 import datetime
 import os
@@ -23,10 +23,6 @@ BMP_LOG_NAME = "BMP_log.csv"
 # Name of Directory for logs
 LOG_DIR = 'logs'
 
-# interval for loging and refreshing the values on LCD in seconds
-INTERVAL_LOG = 10
-INTERVAL_LCD = 4
-
 #=======================================================================
 def INIT_dir(dir):
     if not os.path.exists(dir):
@@ -35,13 +31,13 @@ def INIT_dir(dir):
 
 
 if __name__ == "__main__":
-    INIT_dir(LOG_DIR) # create log dir
+    INIT_dir(LOG_DIR) # create log dir if necessary
 
     q = Queue()
 
     # Setup Handlers
-    DHT_hnd = handlers.DHT_handler(INTERVAL_LOG,INTERVAL_LCD,os.path.join(os.path.dirname(__file__),LOG_DIR,DHT_LOG_NAME),q)
-    BMP_hnd = handlers.BMP_handler(INTERVAL_LOG,INTERVAL_LCD,os.path.join(os.path.dirname(__file__),LOG_DIR,BMP_LOG_NAME),q)
+    DHT_hnd = handlers.DHT_handler(os.path.join(os.path.dirname(__file__),LOG_DIR,DHT_LOG_NAME),q)
+    BMP_hnd = handlers.BMP_handler(os.path.join(os.path.dirname(__file__),LOG_DIR,BMP_LOG_NAME),q)
     LCD_hnd = handlers.lcd_handler(q)
 
     # Start Handlers
